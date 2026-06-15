@@ -149,8 +149,8 @@ class Carrello {
 	#prodotti = [];
 	#totale = 0;
 
-	constructor(utente) {
-		this.utente = utente;
+	constructor(_utente) {
+		this.utente = _utente;
 	}
 
 	// GETTER: Restituisce l'elenco dei prodotti (sola lettura)
@@ -184,7 +184,7 @@ class Carrello {
 
 		// 2. Controllo dei duplicati: se esiste già, aumenta solo la quantità
 		const prodottoEsistente = this.#prodotti.find(
-			(p) => p.nome === prodotto.nome,
+			(product) => product.nome === prodotto.nome,
 		);
 		const quantitadaAggiungere = prodotto.quantita || 1;
 
@@ -209,7 +209,7 @@ class Carrello {
 	// Metodo privato di supporto per il ricalcolo
 	#ricalcolaTotale() {
 		this.#totale = this.#prodotti.reduce(
-			(acc, p) => acc + p.prezzo * p.quantita,
+			(acc, prod) => acc + prod.prezzo * prod.quantita,
 			0,
 		);
 	}
