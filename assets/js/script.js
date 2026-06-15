@@ -139,3 +139,110 @@ class ContoCorrente {
 const myAccount = new ContoCorrente(30);
 
 console.log(myAccount.saldo);
+
+// Esempio setter completo
+console.log('----------------------------------------')
+console.log('----- Esempio carrello prodotti con getter/setter -----');
+
+class Carrello {
+	// Proprietà private native (accessibili solo dentro questa classe)
+	#prodotti = [];
+	#totale = 0;
+
+	constructor(utente) {
+		this.utente = utente;
+	}
+
+	// GETTER: Restituisce l'elenco dei prodotti (sola lettura)
+	get prodotti() {
+		return this.#prodotti;
+	}
+
+	// GETTER: Restituisce il totale aggiornato
+	get totale() {
+		return this.#totale;
+	}
+
+	// SETTER: Aggiunge un prodotto eseguendo validazioni e calcoli
+	set nuovoProdotto(prodotto) {
+		// 1. Validazione della struttura dell'oggetto
+		if (!prodotto || typeof prodotto !== 'object') {
+			console.error('Errore: Il prodotto deve essere un oggetto valido.');
+			return;
+		}
+
+		if (
+			!prodotto.nome ||
+			typeof prodotto.prezzo !== 'number' ||
+			prodotto.prezzo <= 0
+		) {
+			console.error(
+				`Errore: Dati prodotto non validi per "${prodotto.nome}". Il prezzo deve essere maggiore di 0.`,
+			);
+			return;
+		}
+
+		// 2. Controllo dei duplicati: se esiste già, aumenta solo la quantità
+		const prodottoEsistente = this.#prodotti.find(
+			(p) => p.nome === prodotto.nome,
+		);
+		const quantitadaAggiungere = prodotto.quantita || 1;
+
+		if (prodottoEsistente) {
+			prodottoEsistente.quantita += quantitadaAggiungere;
+		} else {
+			// Inserisce il nuovo prodotto con quantità di default a 1
+			this.#prodotti.push({
+				nome: prodotto.nome,
+				prezzo: prodotto.prezzo,
+				quantita: quantitadaAggiungere,
+			});
+		}
+
+		// 3. Effetto collaterale automatico: ricalcola il totale del carrello
+		this.#ricalcolaTotale();
+		console.log(
+			`[Carrello ${this.utente}]: Aggiunto "${prodotto.nome}" (x${quantitadaAggiungere})`,
+		);
+	}
+
+	// Metodo privato di supporto per il ricalcolo
+	#ricalcolaTotale() {
+		this.#totale = this.#prodotti.reduce(
+			(acc, p) => acc + p.prezzo * p.quantita,
+			0,
+		);
+	}
+}
+
+// --- UTILIZZO PRATICO ---
+
+const mioCarrello = new Carrello('Marco');
+
+// 1. Aggiunta di un prodotto valido
+mioCarrello.nuovoProdotto = { nome: 'Smartphone', prezzo: 599, quantita: 1 };
+// Output: [Carrello Marco]: Aggiunto "Smartphone" (x1)
+
+// 2. Aggiunta di un secondo prodotto dello stesso tipo (aggiorna la quantità)
+mioCarrello.nuovoProdotto = { nome: 'Smartphone', prezzo: 599, quantita: 2 };
+// Output: [Carrello Marco]: Aggiunto "Smartphone" (x2)
+
+// 3. Tentativo di inserimento di un prodotto non valido (prezzo negativo)
+mioCarrello.nuovoProdotto = { nome: 'Cuffie Fallate', prezzo: -20 };
+// Output: Errore: Dati prodotto non validi per "Cuffie Fallate". Il prezzo deve essere maggiore di 0.
+
+// 4. Aggiunta di un prodotto diverso
+mioCarrello.nuovoProdotto = { nome: 'Cover Rigida', prezzo: 20 };
+// Output: [Carrello Marco]: Aggiunto "Cover Rigida" (x1)
+
+// 5. Verifica dello stato finale tramite i Getter
+console.log('Prodotti nel carrello:', mioCarrello.prodotti);
+/* Output:
+[
+  { nome: 'Smartphone', prezzo: 599, quantita: 3 },
+  { nome: 'Cover Rigida', prezzo: 20, quantita: 1 }
+]
+*/
+
+console.log(`Totale da pagare: €${mioCarrello.totale}`);
+// Output: Totale da pagare: €1817 ( (599 * 3) + 20 )
