@@ -141,7 +141,7 @@ const myAccount = new ContoCorrente(30);
 console.log(myAccount.saldo);
 
 // Esempio setter completo
-console.log('----------------------------------------')
+console.log('----------------------------------------');
 console.log('----- Esempio carrello prodotti con getter/setter -----');
 
 class Carrello {
@@ -234,6 +234,8 @@ mioCarrello.nuovoProdotto = { nome: 'Cuffie Fallate', prezzo: -20 };
 // 4. Aggiunta di un prodotto diverso
 mioCarrello.nuovoProdotto = { nome: 'Cover Rigida', prezzo: 20 };
 // Output: [Carrello Marco]: Aggiunto "Cover Rigida" (x1)
+
+mioCarrello.nuovoProdotto = { nome: 'Cover Rigida', prezzo: 20 };
 
 // 5. Verifica dello stato finale tramite i Getter
 console.log('Prodotti nel carrello:', mioCarrello.prodotti);
